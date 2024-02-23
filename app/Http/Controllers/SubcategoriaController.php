@@ -25,6 +25,10 @@ class SubcategoriaController extends Controller
             ], 401);
         }
 
+        if (!is_numeric($id)) {
+            return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
+        }
+
         $obtenersubcategoria = $this->subcategoria::where('id', $id)->first();
 
         if($obtenersubcategoria){
@@ -87,6 +91,10 @@ class SubcategoriaController extends Controller
             return response()->json([
                 'message' => 'Usuario no esta autenticado',
             ], 401);
+        }
+
+        if (!is_numeric($id)) {
+            return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
         }
 
         $obtenersubcategoria = $this->subcategoria::where('id', $id)->first();
@@ -152,6 +160,10 @@ class SubcategoriaController extends Controller
             return response()->json([
                 'message' => 'Usuario no esta autenticado',
             ], 401);
+        }
+
+        if (!is_numeric($id)) {
+            return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
         }
 
         $validator = Validator::make($request->all(), [
