@@ -16,6 +16,65 @@ class SubcategoriaController extends Controller
         $this->subcategoria = $subcategoria;
     }
 
+    public function listar(){
+
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
+
+        $modelo = $this->subcategoria;
+
+        if($_GET['page'] && $_GET['perPage']){
+
+            if($_GET['page'] == 1){
+                $pageReal = $_GET['page'] - 1;
+            }else{
+                $pageReal = ($_GET['page'] - 1) * $_GET['perPage'];
+            }
+
+            $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage']);
+            $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->limit($_GET['perPage']);
+        }
+
+        if($_GET['filtro_field'] && $_GET['filtro_word']){
+            if($_GET['filtro_field'] == 'id'){
+                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
+            }else{
+                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
+            }
+        }
+
+        if($_GET['order'] &&  $_GET['field']){
+            $listasubcategoria = $listasubcategoria->orderBy($_GET['field'], $_GET['order']);
+            $next = $next->orderBy($_GET['field'], $_GET['order']);
+        }else{
+            $listasubcategoria = $listasubcategoria->orderBy('id', 'desc');
+            $next = $modelo->orderBy('id', 'desc');
+        }
+
+
+        if($_GET['order'] &&  $_GET['field']){
+            $listasubcategoria = $listasubcategoria->orderBy($_GET['field'], $_GET['order']);
+            $next = $next->orderBy($_GET['field'], $_GET['order']);
+        }else{
+            $listasubcategoria = $listasubcategoria->orderBy('id', 'desc');
+            $next = $modelo->orderBy('id', 'desc');
+        }
+
+
+        return response()->json([
+            'message' => 'Lista subcategorias',
+            'response' => [
+                'data' => $listasubcategoria->get(),
+                'next' => (count($next->get()) > 0) ? $_GET['page'] + 1 : null,
+                'back' => ($_GET['page'] == 1) ? null : $_GET['page'] - 1
+            ]
+        ], 200);
+    }
 
     public function subcategoria($id){
 
@@ -47,11 +106,11 @@ class SubcategoriaController extends Controller
 
     public function agregar(Request $request){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
@@ -87,11 +146,11 @@ class SubcategoriaController extends Controller
 
     public function eliminar($id){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -111,47 +170,6 @@ class SubcategoriaController extends Controller
             'message' => 'subcategoria no existe',
             'response' => null
         ], 404);
-    }
-
-    public function listar(){
-
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
-
-        $modelo = $this->subcategoria;
-
-        if($_GET['page'] && $_GET['perPage']){
-
-            if($_GET['page'] == 1){
-                $pageReal = $_GET['page'] - 1;
-            }else{
-                $pageReal = ($_GET['page'] - 1) * $_GET['perPage'];
-            }
-
-            $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage']);
-            $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->limit($_GET['perPage']);
-        }
-
-        if($_GET['order'] &&  $_GET['field']){
-            $listasubcategoria = $listasubcategoria->orderBy($_GET['field'], $_GET['order']);
-            $next = $next->orderBy($_GET['field'], $_GET['order']);
-        }else{
-            $listasubcategoria = $listasubcategoria->orderBy('id', 'desc');
-            $next = $modelo->orderBy('id', 'desc');
-        }
-
-
-        return response()->json([
-            'message' => 'Lista subcategorias',
-            'response' => [
-                'data' => $listasubcategoria->get(),
-                'next' => (count($next->get()) > 0) ? $_GET['page'] + 1 : null,
-                'back' => ($_GET['page'] == 1) ? null : $_GET['page'] - 1
-            ]
-        ], 200);
     }
 
     public function editar($id, Request $request){

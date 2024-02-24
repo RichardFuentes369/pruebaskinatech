@@ -31,13 +31,6 @@ class CategoriaController extends Controller
 
         $obtenerCategoria = Categoria::where('id', $id)->first();
 
-        if($obtenerCategoria){
-            return response()->json([
-                'message' => 'Categoria existente',
-                'response' => $obtenerCategoria
-            ], 200);
-        }
-
         return response()->json([
             'message' => 'Categoria no existe',
             'response' => null
@@ -47,11 +40,11 @@ class CategoriaController extends Controller
 
     public function agregar(Request $request){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
@@ -87,11 +80,11 @@ class CategoriaController extends Controller
 
     public function eliminar($id){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -115,11 +108,11 @@ class CategoriaController extends Controller
 
     public function listar(){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         $modelo = $this->categoria;
 
@@ -133,6 +126,16 @@ class CategoriaController extends Controller
 
             $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage']);
             $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->limit($_GET['perPage']);
+        }
+
+        if($_GET['filtro_field'] && $_GET['filtro_word']){
+            if($_GET['filtro_field'] == 'id'){
+                $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
+            }else{
+                $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
+            }
         }
 
         if($_GET['order'] &&  $_GET['field']){
@@ -193,6 +196,5 @@ class CategoriaController extends Controller
             'response' => null
         ], 404);
     }
-
 
 }
