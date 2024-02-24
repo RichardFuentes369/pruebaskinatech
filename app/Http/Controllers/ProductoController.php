@@ -46,11 +46,11 @@ class ProductoController extends Controller
 
     public function agregar(Request $request){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
@@ -86,11 +86,11 @@ class ProductoController extends Controller
 
     public function eliminar($id){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -114,11 +114,11 @@ class ProductoController extends Controller
 
     public function listar(){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         $modelo = $this->producto;
 
@@ -134,6 +134,16 @@ class ProductoController extends Controller
             $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->limit($_GET['perPage']);
         }
 
+        if($_GET['filtro_field'] && $_GET['filtro_word']){
+            if($_GET['filtro_field'] == 'id'){
+                $listaproducto = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
+            }else{
+                $listaproducto = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
+            }
+        }
+
         if($_GET['order'] &&  $_GET['field']){
             $listaproducto = $listaproducto->orderBy($_GET['field'], $_GET['order']);
             $next = $next->orderBy($_GET['field'], $_GET['order']);
@@ -141,6 +151,7 @@ class ProductoController extends Controller
             $listaproducto = $listaproducto->orderBy('id', 'desc');
             $next = $modelo->orderBy('id', 'desc');
         }
+
 
 
         return response()->json([
