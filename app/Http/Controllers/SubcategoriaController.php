@@ -58,7 +58,6 @@ class SubcategoriaController extends Controller
         $modelo = $this->subcategoria;
 
         if($_GET['page'] && $_GET['perPage']){
-
             if($_GET['page'] == 1){
                 $pageReal = $_GET['page'] - 1;
             }else{
