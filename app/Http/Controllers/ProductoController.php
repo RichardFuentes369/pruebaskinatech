@@ -86,11 +86,11 @@ class ProductoController extends Controller
 
     public function eliminar($id){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -114,11 +114,11 @@ class ProductoController extends Controller
 
     public function listar(){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         $modelo = $this->producto;
 
