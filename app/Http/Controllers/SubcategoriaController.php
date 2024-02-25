@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subcategoria;
+use App\Models\{
+    Categoria,
+    Subcategoria
+};
 use Illuminate\Http\Request;
 use Validator;
 
@@ -62,16 +65,16 @@ class SubcategoriaController extends Controller
                 $pageReal = ($_GET['page'] - 1) * $_GET['perPage'];
             }
 
-            $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage']);
+            $listasubcategoria = $modelo->with('categoria')->offset($pageReal)->limit($_GET['perPage']);
             $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->limit($_GET['perPage']);
         }
 
         if($_GET['filtro_field'] && $_GET['filtro_word']){
             if($_GET['filtro_field'] == 'id' || $_GET['filtro_field'] == 'status'){
-                $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
             }else{
-                $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
             }
         }
@@ -115,6 +118,7 @@ class SubcategoriaController extends Controller
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
             'estado' => 'required|string',
+            'subcategoria' => 'required|string',
             'status' => 'in:activo,inactivo'
         ]);
 
@@ -122,9 +126,12 @@ class SubcategoriaController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
+        $categoria_id = Categoria::where('id', intval($request['subcategoria']))->first();
+
         $nuevasubcategoria = new $this->subcategoria;
         $nuevasubcategoria->name = $request['nombre'];
         $nuevasubcategoria->status = $request['estado'];
+        $nuevasubcategoria->categoria_id = $categoria_id['id'];
         $guardarsubcategoria = $nuevasubcategoria->save();
 
         if($guardarsubcategoria){
@@ -187,6 +194,7 @@ class SubcategoriaController extends Controller
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
             'estado' => 'required|string',
+            'subcategoria' => 'required|string',
             'status' => 'in:activo,inactivo'
         ]);
 
@@ -199,6 +207,7 @@ class SubcategoriaController extends Controller
         if($obtenersubcategoria){
             $obtenersubcategoria->name = $request->nombre;
             $obtenersubcategoria->status = $request->estado;
+            $obtenersubcategoria->categoria_id = $request->subcategoria;
             $obtenersubcategoria->save();
             return response()->json([
                 'message' => 'subcategoria actualizada exitosamente',

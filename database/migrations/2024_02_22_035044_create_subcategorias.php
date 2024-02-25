@@ -17,6 +17,8 @@ class CreateSubcategorias extends Migration
             $table->id();
             $table->string('name');
             $table->enum('status', ['activo', 'inactivo']);
+            $table->unsignedBigInteger('categoria_id');
+            $table->foreign('categoria_id')->references('id')->on('categorias');
             $table->timestamps();
 
             // llave foranea categoria no pueden ser nulas

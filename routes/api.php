@@ -35,6 +35,7 @@ Route::group([
 Route::group([
     'prefix' => 'categoria',
 ], function ($router) {
+    Route::get('/getAll', [CategoriaController::class, 'categoriaAll']);
     Route::get('/obtener-categoria/{id}', [CategoriaController::class, 'categoria']);
     Route::post('/agregar-categoria', [CategoriaController::class, 'agregar']);
     Route::get('/listar-categoria', [CategoriaController::class, 'listar']);

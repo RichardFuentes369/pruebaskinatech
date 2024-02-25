@@ -16,6 +16,29 @@ class CategoriaController extends Controller
         $this->categoria = $categoria;
     }
 
+    public function categoriaAll(){
+
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
+
+        $obtenerCategoria = Categoria::where('status','activo')->get();
+
+        if($obtenerCategoria){
+            return response()->json([
+                'message' => 'Lista de categorias',
+                'response' => $obtenerCategoria
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => 'Categoria no existe',
+                'response' => null
+            ], 404);
+        }
+
+    }
 
     public function categoria($id){
 
