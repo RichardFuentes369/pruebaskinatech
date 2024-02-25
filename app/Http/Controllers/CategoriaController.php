@@ -19,11 +19,11 @@ class CategoriaController extends Controller
 
     public function categoria($id){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -31,10 +31,18 @@ class CategoriaController extends Controller
 
         $obtenerCategoria = Categoria::where('id', $id)->first();
 
-        return response()->json([
-            'message' => 'Categoria no existe',
-            'response' => null
-        ], 404);
+        if($obtenerCategoria){
+            return response()->json([
+                'message' => 'Categoria no '.$id,
+                'response' => $obtenerCategoria
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => 'Categoria no existe',
+                'response' => null
+            ], 404);
+        }
+
 
     }
 
@@ -129,7 +137,7 @@ class CategoriaController extends Controller
         }
 
         if($_GET['filtro_field'] && $_GET['filtro_word']){
-            if($_GET['filtro_field'] == 'id'){
+            if($_GET['filtro_field'] == 'id' || $_GET['filtro_field'] == 'status'){
                 $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
             }else{
@@ -159,11 +167,11 @@ class CategoriaController extends Controller
 
     public function editar($id, Request $request){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
