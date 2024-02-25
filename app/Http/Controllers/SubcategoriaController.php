@@ -16,6 +16,34 @@ class SubcategoriaController extends Controller
         $this->subcategoria = $subcategoria;
     }
 
+    public function subcategoria($id){
+
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
+
+        if (!is_numeric($id)) {
+            return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
+        }
+
+        $obtenersubcategoria = $this->subcategoria::where('id', $id)->first();
+
+        if($obtenersubcategoria){
+            return response()->json([
+                'message' => 'subcategoria existente',
+                'response' => $obtenersubcategoria
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'subcategoria no existe',
+            'response' => null
+        ], 404);
+
+    }
+
     public function listar(){
 
         // if(!auth()->user()){
@@ -39,11 +67,11 @@ class SubcategoriaController extends Controller
         }
 
         if($_GET['filtro_field'] && $_GET['filtro_word']){
-            if($_GET['filtro_field'] == 'id'){
-                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+            if($_GET['filtro_field'] == 'id' || $_GET['filtro_field'] == 'status'){
+                $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
             }else{
-                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $listaCategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
             }
         }
@@ -74,34 +102,6 @@ class SubcategoriaController extends Controller
                 'back' => ($_GET['page'] == 1) ? null : $_GET['page'] - 1
             ]
         ], 200);
-    }
-
-    public function subcategoria($id){
-
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
-
-        if (!is_numeric($id)) {
-            return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
-        }
-
-        $obtenersubcategoria = $this->subcategoria::where('id', $id)->first();
-
-        if($obtenersubcategoria){
-            return response()->json([
-                'message' => 'subcategoria existente',
-                'response' => $obtenersubcategoria
-            ], 200);
-        }
-
-        return response()->json([
-            'message' => 'subcategoria no existe',
-            'response' => null
-        ], 404);
-
     }
 
     public function agregar(Request $request){
@@ -174,11 +174,11 @@ class SubcategoriaController extends Controller
 
     public function editar($id, Request $request){
 
-        if(!auth()->user()){
-            return response()->json([
-                'message' => 'Usuario no esta autenticado',
-            ], 401);
-        }
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
