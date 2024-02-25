@@ -42,11 +42,11 @@ class CategoriaController extends Controller
 
     public function categoria($id){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -71,11 +71,11 @@ class CategoriaController extends Controller
 
     public function agregar(Request $request){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
@@ -111,11 +111,11 @@ class CategoriaController extends Controller
 
     public function eliminar($id){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -139,11 +139,11 @@ class CategoriaController extends Controller
 
     public function listar(){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         $modelo = $this->categoria;
 
@@ -190,11 +190,11 @@ class CategoriaController extends Controller
 
     public function editar($id, Request $request){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);

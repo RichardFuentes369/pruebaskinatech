@@ -21,11 +21,11 @@ class SubcategoriaController extends Controller
 
     public function subcategoria($id){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -49,11 +49,11 @@ class SubcategoriaController extends Controller
 
     public function listar(){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         $modelo = $this->subcategoria;
 
@@ -70,10 +70,10 @@ class SubcategoriaController extends Controller
 
         if($_GET['filtro_field'] && $_GET['filtro_word']){
             if($_GET['filtro_field'] == 'id' || $_GET['filtro_field'] == 'status'){
-                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+                $listasubcategoria = $modelo->with('categoria')->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
             }else{
-                $listasubcategoria = $modelo->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $listasubcategoria = $modelo->with('categoria')->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
             }
         }
@@ -108,11 +108,11 @@ class SubcategoriaController extends Controller
 
     public function agregar(Request $request){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
@@ -152,11 +152,11 @@ class SubcategoriaController extends Controller
 
     public function eliminar($id){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -180,11 +180,11 @@ class SubcategoriaController extends Controller
 
     public function editar($id, Request $request){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         if (!is_numeric($id)) {
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
@@ -201,7 +201,7 @@ class SubcategoriaController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $obtenersubcategoria = $this->subcategoria::where('id', $id)->first();
+        $obtenersubcategoria = $this->subcategoria::where('id', intval($id))->first();
 
         if($obtenersubcategoria){
             $obtenersubcategoria->name = $request->nombre;
