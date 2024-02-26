@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProductosAsociados;
+use App\Models\{
+    Categoria,
+    Producto,
+    Subcategoria
+};
 use Illuminate\Http\Request;
 use Validator;
 
@@ -113,6 +118,25 @@ class SubcategoriaProductoController extends Controller
 
         if($validator1->fails() && $validator2->fails()){
             return response()->json("Recuerde que debe asignar categoria o subcategoria o las dos", 400);
+        }
+
+        if(intVal($request['categoria'])){
+            $categoria = Categoria::where('id', intVal($request['categoria']))->first();
+            if(!$categoria){
+                return response()->json("Categoria no existe", 400);
+            }
+        }
+        if(intVal($request['productos'])){
+            $producto = Producto::where('id', intVal($request['productos']))->first();
+            if(!$producto){
+                return response()->json("Producto no existe", 400);
+            }
+        }
+        if(intVal($request['subcategoria'])){
+            $subcategoria = Subcategoria::where('id', intVal($request['subcategoria']))->first();
+            if(!$subcategoria){
+                return response()->json("Subcategoria no existe", 400);
+            }
         }
 
         $asignacion = new $this->productoAsociado;
