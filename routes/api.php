@@ -70,7 +70,7 @@ Route::group([
     'prefix' => 'subcategorias-productos'
 ], function ($router) {
     Route::get('/listar-subcategorias-productos', [SubcategoriaProductoController::class, 'listar']);
-    Route::put('/editar-subcategoria-productos/{id}', [SubcategoriaProductoController::class, 'editar']);
+    Route::post('/asignar-subcategorias-productos', [SubcategoriaProductoController::class, 'agregar']);
     Route::delete('/eliminar-subcategorias-productos/{id}', [SubcategoriaProductoController::class, 'eliminar']);
 });
 

@@ -92,4 +92,47 @@ class SubcategoriaProductoController extends Controller
             'response' => null
         ], 404);
     }
+
+    public function agregar(Request $request){
+
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
+
+        $validator1 = Validator::make($request->all(), [
+            'productos' => 'required|string',
+            'categoria' => 'required|string',
+        ]);
+
+        $validator2 = Validator::make($request->all(), [
+            'productos' => 'required|string',
+            'subcategoria' => 'required|string',
+        ]);
+
+        if($validator1->fails() && $validator2->fails()){
+            return response()->json("Recuerde que debe asignar categoria o subcategoria o las dos", 400);
+        }
+
+        $asignacion = new $this->productoAsociado;
+        $asignacion->categoria_id = ($request['categoria']) ? intVal($request['categoria']) : null;
+        $asignacion->subcategoria_id = ($request['subcategoria']) ? intVal($request['subcategoria']) : null;
+        $asignacion->producto_id = ($request['productos']) ? intVal($request['productos']) : null;
+        $asignacionGuardada = $asignacion->save();
+
+        if($asignacionGuardada){
+            return response()->json([
+                'message' => 'Asignacion guardada exitosamente',
+                'response' => $asignacionGuardada
+            ], 200);
+        }
+
+        if(!$asignacionGuardada){
+            return response()->json([
+                'message' => 'Asignacion no se pudo guardar',
+                'response' => null
+            ], 404);
+        }
+    }
 }

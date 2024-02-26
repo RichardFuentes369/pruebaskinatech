@@ -16,7 +16,7 @@ class ProductosAsociados extends Model
     }
 
     public function productos(){
-        return $this->belongsTo(Producto::class, 'subcategoria_id', 'id');
+        return $this->belongsTo(Producto::class, 'producto_id', 'id');
     }
 
     public function subcategoria(){
