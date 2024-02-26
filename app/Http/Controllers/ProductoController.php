@@ -46,11 +46,11 @@ class ProductoController extends Controller
 
     public function agregar(Request $request){
 
-        // if(!auth()->user()){
-        //     return response()->json([
-        //         'message' => 'Usuario no esta autenticado',
-        //     ], 401);
-        // }
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string',
