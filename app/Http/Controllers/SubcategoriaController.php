@@ -64,16 +64,16 @@ class SubcategoriaController extends Controller
                 $pageReal = ($_GET['page'] - 1) * $_GET['perPage'];
             }
 
-            $listasubcategoria = $modelo->with('categoria')->offset($pageReal)->limit($_GET['perPage']);
+            $listasubcategoria = $modelo->with('categoria')->withCount(['productos as cantidadProductos'])->offset($pageReal)->limit($_GET['perPage']);
             $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->limit($_GET['perPage']);
         }
 
         if($_GET['filtro_field'] && $_GET['filtro_word']){
             if($_GET['filtro_field'] == 'id' || $_GET['filtro_field'] == 'status'){
-                $listasubcategoria = $modelo->with('categoria')->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+                $listasubcategoria = $modelo->with('categoria')->withCount(['productos as cantidadProductos'])->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
             }else{
-                $listasubcategoria = $modelo->with('categoria')->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $listasubcategoria = $modelo->with('categoria')->withCount(['productos as cantidadProductos'])->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
                 $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
             }
         }
