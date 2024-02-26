@@ -3,8 +3,7 @@ composer i <br>
 cp .env.example .env <br>
 php artisan jwt:secret <br>
 php arisan migrate:fresh <br>
-### Nota: El usuario o los usuarios se deben crear desde postman
-### en autenticacion - register
+### Nota: El usuario o los usuarios se deben crear desde postman en autenticacion - register
 ### recordemos que debe ir una estructura como la siguiente
 > basico
 ```
