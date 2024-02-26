@@ -19,6 +19,22 @@ class SubcategoriaController extends Controller
         $this->subcategoria = $subcategoria;
     }
 
+    public function subcategoriaAll(){
+        $obtenerCategoria = Subcategoria::where('status','activo')->get();
+
+        if($obtenerCategoria){
+            return response()->json([
+                'message' => 'Lista de subcategorias',
+                'response' => $obtenerCategoria
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => 'Subategoria no existe',
+                'response' => null
+            ], 404);
+        }
+    }
+
     public function subcategoria($id){
 
         if(!auth()->user()){

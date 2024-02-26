@@ -15,6 +15,30 @@ class ProductoController extends Controller
         $this->producto = $producto;
     }
 
+    public function productoAll(){
+
+        // if(!auth()->user()){
+        //     return response()->json([
+        //         'message' => 'Usuario no esta autenticado',
+        //     ], 401);
+        // }
+
+        $obtenerProductos = Producto::where('status','activo')->get();
+
+        if($obtenerProductos){
+            return response()->json([
+                'message' => 'Lista de productos',
+                'response' => $obtenerProductos
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => 'Producto no existe',
+                'response' => null
+            ], 404);
+        }
+
+    }
+
 
     public function producto($id){
 

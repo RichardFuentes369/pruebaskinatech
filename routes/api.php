@@ -47,6 +47,7 @@ Route::group([
 Route::group([
     'prefix' => 'subcategoria'
 ], function ($router) {
+    Route::get('/getAll', [SubcategoriaController::class, 'subcategoriaAll']);
     Route::get('/obtener-subcategoria/{id}', [SubcategoriaController::class, 'subcategoria']);
     Route::post('/agregar-subcategoria', [SubcategoriaController::class, 'agregar']);
     Route::get('/listar-subcategoria', [SubcategoriaController::class, 'listar']);
@@ -57,6 +58,7 @@ Route::group([
 Route::group([
     'prefix' => 'producto'
 ], function ($router) {
+    Route::get('/getAll', [ProductoController::class, 'productoAll']);
     Route::get('/obtener-producto/{id}', [ProductoController::class, 'producto']);
     Route::post('/agregar-producto', [ProductoController::class, 'agregar']);
     Route::get('/listar-producto', [ProductoController::class, 'listar']);
@@ -67,10 +69,8 @@ Route::group([
 Route::group([
     'prefix' => 'subcategorias-productos'
 ], function ($router) {
-    // Route::get('/obtener-producto/{id}', [ProductoController::class, 'producto']);
-    // Route::post('/agregar-producto', [ProductoController::class, 'agregar']);
-    // Route::get('/listar-producto', [ProductoController::class, 'listar']);
+    Route::get('/listar-subcategorias-productos', [SubcategoriaProductoController::class, 'listar']);
     Route::put('/editar-subcategoria-productos/{id}', [SubcategoriaProductoController::class, 'editar']);
-    // Route::delete('/eliminar-producto/{id}', [ProductoController::class, 'eliminar']);
+    Route::delete('/eliminar-subcategorias-productos/{id}', [SubcategoriaProductoController::class, 'eliminar']);
 });
 

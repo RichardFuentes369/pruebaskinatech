@@ -15,7 +15,57 @@ class SubcategoriaProductoController extends Controller
         $this->productoAsociado = $productoAsociado;
     }
 
-    public function editar($id, Request $request){
+    public function listar(){
+
+        if(!auth()->user()){
+            return response()->json([
+                'message' => 'Usuario no esta autenticado',
+            ], 401);
+        }
+
+        $modelo = $this->productoAsociado;
+
+        if($_GET['page'] && $_GET['perPage']){
+
+            if($_GET['page'] == 1){
+                $pageReal = $_GET['page'] - 1;
+            }else{
+                $pageReal = ($_GET['page'] - 1) * $_GET['perPage'];
+            }
+
+            $listaproductosasociados = $modelo->with('categoria')->with('subcategoria')->with('productos')->offset($pageReal)->limit($_GET['perPage']);
+            $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->limit($_GET['perPage']);
+        }
+
+        if($_GET['filtro_field'] && $_GET['filtro_word']){
+            if($_GET['filtro_field'] == 'id'){
+                $listaproductosasociados = $modelo->with('categoria')->with('subcategoria')->with('productos')->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word']);
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], $_GET['filtro_word'])->limit($_GET['perPage']);
+            }else{
+                $listaproductosasociados = $modelo->with('categoria')->with('subcategoria')->with('productos')->offset($pageReal)->limit($_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%');
+                $next = $modelo->offset($_GET['page'] * $_GET['perPage'])->where($_GET['filtro_field'], 'like', '%'.$_GET['filtro_word'].'%')->limit($_GET['perPage']);
+            }
+        }
+
+        if($_GET['order'] &&  $_GET['field']){
+            $listaproductosasociados = $listaproductosasociados->orderBy($_GET['field'], $_GET['order']);
+            $next = $next->orderBy($_GET['field'], $_GET['order']);
+        }else{
+            $listaproductosasociados = $listaproductosasociados->orderBy('id', 'desc');
+            $next = $modelo->orderBy('id', 'desc');
+        }
+
+        return response()->json([
+            'message' => 'Lista productos',
+            'response' => [
+                'data' => $listaproductosasociados->get(),
+                'next' => (count($next->get()) > 0) ? $_GET['page'] + 1 : null,
+                'back' => ($_GET['page'] == 1) ? null : $_GET['page'] - 1
+            ]
+        ], 200);
+    }
+
+    public function eliminar($id){
 
         if(!auth()->user()){
             return response()->json([
@@ -27,30 +77,18 @@ class SubcategoriaProductoController extends Controller
             return response()->json(['message' => 'El parámetro debe ser un número', 'response' => null], 400);
         }
 
+        $obtenerproducto = ProductosAsociados::where('id', $id)->first();
 
-        $validator = Validator::make($request->all(), [
-            'subcategoria' => 'required|string',
-        ]);
-
-        if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
-        }
-
-        $obtenerAsociados = ProductosAsociados::where('subcategoria_id', $id)->get();
-
-        if($obtenerAsociados){
-            foreach ($obtenerAsociados as $value) {
-                $value->categoria_id = intval($request->subcategoria);
-                $value->save();
-            }
+        if($obtenerproducto){
+            $obtenerproducto->delete();
             return response()->json([
-                'message' => 'producto actualizada exitosamente',
+                'message' => 'producto eliminada exitosamente',
                 'response' => null
             ], 200);
         }
 
         return response()->json([
-            'message' => 'La producto no existe',
+            'message' => 'producto no existe',
             'response' => null
         ], 404);
     }
